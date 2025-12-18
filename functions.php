@@ -67,9 +67,9 @@ function hash_password($password) {
  * @param string $email
  * @return bool
  */
-function validate_email($email) {
-    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
-}
+// function validate_email($email) {
+//     return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;
+// }
 
 /**
  * Validate password strength
@@ -98,9 +98,9 @@ function username_exists($pdo, $username) {
  * @param string $email
  * @return bool
  */
-function email_exists($pdo, $email) {
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    return $stmt->fetchColumn() > 0;
-}
+// function email_exists($pdo, $email) {
+//     $stmt = $pdo->prepare("SELECT COUNT(*) FROM users WHERE email = ?");
+//     $stmt->execute([$email]);
+//     return $stmt->fetchColumn() > 0;
+// }
 ?>

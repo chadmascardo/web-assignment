@@ -61,7 +61,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif ($action === 'register') {
 
         $username = sanitize_input($_POST['username']);
-        $email = sanitize_input($_POST['email']);
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
         $full_name = sanitize_input($_POST['full_name']);
@@ -73,14 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $errors[] = "Username must be at least 3 characters.";
         } elseif (username_exists($pdo, $username)) {
             $errors[] = "Username already exists.";
-        }
-
-        if (empty($email)) {
-            $errors[] = "Email is required.";
-        } elseif (!validate_email($email)) {
-            $errors[] = "Invalid email format.";
-        } elseif (email_exists($pdo, $email)) {
-            $errors[] = "Email already exists.";
         }
 
         if (empty($password)) {
@@ -106,9 +97,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $hashed_password = hashPassword($password);
 
             try {
-                $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, role) VALUES (?, ?, ?, ?, ?)");
+                $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)");
 
-                if ($stmt->execute([$username, $email, $hashed_password, $full_name, $role])) {
+                if ($stmt->execute([$username, $hashed_password, $full_name, $role])) {
                     $success = "Registration successful! You can now login.";
                     $mode = 'login';
                 } else {
@@ -308,12 +299,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" name="username"
                         value="<?= isset($_POST['username']) ? sanitize($_POST['username']) : '' ?>" required autofocus>
                     <div class="hint">Minimum 3 characters</div>
-                </div>
-
-                <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" value="<?= isset($_POST['email']) ? sanitize($_POST['email']) : '' ?>"
-                        required>
                 </div>
 
                 <div class="form-group">

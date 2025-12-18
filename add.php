@@ -10,7 +10,6 @@ $success = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = sanitize_input($_POST['username']);
-    $email = sanitize_input($_POST['email']);
     $full_name = sanitize_input($_POST['full_name']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
@@ -22,14 +21,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errors[] = "Username must be at least 3 characters.";
     } elseif (username_exists($pdo, $username)) {
         $errors[] = "Username already exists.";
-    }
-    
-    if (empty($email)) {
-        $errors[] = "Email is required.";
-    } elseif (!validate_email($email)) {
-        $errors[] = "Invalid email format.";
-    } elseif (email_exists($pdo, $email)) {
-        $errors[] = "Email already exists.";
     }
     
     if (empty($full_name)) {
@@ -51,9 +42,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty($errors)) {
         $hashed_password = hash_password($password);
         
-        $stmt = $pdo->prepare("INSERT INTO users (username, email, password, full_name, role) VALUES (?, ?, ?, ?, ?)");
+        $stmt = $pdo->prepare("INSERT INTO users (username, password, full_name, role) VALUES (?, ?, ?, ?)");
         
-        if ($stmt->execute([$username, $email, $hashed_password, $full_name, $user_role])) {
+        if ($stmt->execute([$username, $hashed_password, $full_name, $user_role])) {
             $success = "User created successfully!";
             $_POST = [];
         } else {
@@ -152,11 +143,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="form-group">
         <label>Username: *</label>
         <input type="text" name="username" value="<?= isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '' ?>" required>
-    </div>
-    
-    <div class="form-group">
-        <label>Email: *</label>
-        <input type="email" name="email" value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>" required>
     </div>
     
     <div class="form-group">
